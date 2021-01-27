@@ -1,0 +1,39 @@
+body {
+    font-family: monospace;
+}
+
+div {
+    width: 100px;
+    height: 100px;
+    background-color: #2b88b7;
+    border: 2px solid black;
+    margin: 10px;
+    display: inline-block;
+}
+
+.middle {
+    background-color: #af2121;
+}
+
+/* here nothing will change */
+#static .middle {
+    position: static;
+    top: 100px;
+}
+
+/* here the position moves relative to itself */
+#relative .middle {
+    position: relative;
+    top: 20px
+}
+
+/* here the position is absolute to it's parent */
+#absolute .middle {
+    position: absolute;
+}
+
+#fixed .middle {
+    position: fixed;
+    top: 0;
+    left: 0;
+}
