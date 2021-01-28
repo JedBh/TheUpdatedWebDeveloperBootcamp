@@ -1,0 +1,32 @@
+body {
+    background-color: #0f1322;
+    font-family: monospace;
+}
+
+div {
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    top: 25rem;
+}
+
+button {
+    padding: 12px 20px;
+    border: 2px solid orange;
+    color: orange;
+    letter-spacing: 1px;
+    outline: none;
+    background: linear-gradient(to right, #ffe45a 50%, #0f1322 50%);
+    background-size: 200% 100%;
+    background-position: right bottom;
+    transition: color 0.25s, border-color 0.25s,  box-shadow 0.25s, transform 0.25s, background-position 0.25s, color 0.15s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 3px 3px 0px #ffe45a;
+    border-color: #ffe45a;
+    color: #0f1322;
+    background-position: left bottom;
+    cursor: pointer;
+}
