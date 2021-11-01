@@ -27,6 +27,12 @@ app.use(methodOverride("_method"));
 // variables
 const categories = ["vegetable", "fruit", "dairy"];
 
+function wrapAsync(fn) {
+  return function (req, res, next) {
+    fn(req, res, next).catch((e) => next(e));
+  };
+}
+
 // routes
 app.get("/products", async (req, res, next) => {
   try {
@@ -57,54 +63,50 @@ app.post("/products", async (req, res, next) => {
   }
 });
 
-app.get("/products/:id", async (req, res, next) => {
-  try {
+app.get(
+  "/products/:id",
+  wrapAsync(async (req, res, next) => {
     const { id } = req.params;
     const product = await Product.findById(id);
     if (!product) {
       throw new appError("Product not found", 404);
     }
     res.render("products/show", { product: product });
-  } catch (e) {
-    next(e);
-  }
-});
+  })
+);
 
-app.get("/products/:id/edit", async (req, res, next) => {
-  try {
+app.get(
+  "/products/:id/edit",
+  wrapAsync(async (req, res, next) => {
     const { id } = req.params;
     const product = await Product.findById(id);
     if (!product) {
       throw new appError("Product not found", 404);
     }
     res.render("products/edit", { product: product, categories: categories });
-  } catch (e) {
-    next(e);
-  }
-});
+  })
+);
 
-app.put("/products/:id", async (req, res, next) => {
-  try {
+app.put(
+  "/products/:id",
+  wrapAsync(async (req, res, next) => {
     const { id } = req.params;
     const product = await Product.findByIdAndUpdate(id, req.body, {
       runValidators: true,
       new: true,
     });
     res.redirect(`/products/${product._id}`);
-  } catch (e) {
-    next(e);
-  }
-});
+  })
+);
 
-app.delete("/products/:id", async (req, res, next) => {
-  try {
+app.delete(
+  "/products/:id",
+  wrapAsync(async (req, res, next) => {
     const { id } = req.params;
     const deletedProduct = await Product.findByIdAndDelete(id);
     res.redirect("/products");
-  } catch (e) {
-    next(e);
-  }
-});
+  })
+);
 
 app.use((err, req, res, next) => {
   const { status = 500, message = "something went wrong" } = err;
