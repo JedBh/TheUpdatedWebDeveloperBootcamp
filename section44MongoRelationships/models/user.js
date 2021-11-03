@@ -42,6 +42,8 @@ const makeUser = async () => {
   console.log(res);
 };
 
+// makeUser();
+
 const addAddress = async (id) => {
   const user = await User.findById(id);
   user.addresses.push({
@@ -54,4 +56,4 @@ const addAddress = async (id) => {
   console.log(res);
 };
 
-addAddress("61828f2552c7bab04a27a6bc");
+addAddress("6182a4ac6738eecc4af28b0d");

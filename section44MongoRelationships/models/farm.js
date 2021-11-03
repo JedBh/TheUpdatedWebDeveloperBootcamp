@@ -29,19 +29,6 @@ const farmSchema = Schema({
 const Product = mongoose.model("Product", productSchema);
 const Farm = mongoose.model("Farm", farmSchema);
 
-// const makeFarm = async () => {
-//   const farm = new Farm({
-//     name: "Full Belly Farms",
-//     city: "Guinda, CA",
-//   });
-//   const melon = await Product.findOne({ name: "Goddes Melon" });
-//   farm.products.push(melon);
-//   await farm.save();
-//   console.log(farm);
-// };
-
-// makeFarm();
-
 // Product.insertMany([
 //   {
 //     name: "Goddes Melon",
@@ -60,6 +47,17 @@ const Farm = mongoose.model("Farm", farmSchema);
 //   },
 // ]);
 
+const makeFarm = async () => {
+  const farm = new Farm({
+    name: "Full Belly Farms",
+    city: "Guinda, CA",
+  });
+  const melon = await Product.findOne({ name: "Goddes Melon" });
+  farm.products.push(melon);
+  await farm.save();
+  console.log(farm);
+};
+
 const addProduct = async () => {
   const farm = await Farm.findOne({ name: "Full Belly Farms" });
   const watermelon = await Product.findOne({ name: "Sugar Baby Watermelon" });
@@ -67,4 +65,14 @@ const addProduct = async () => {
   farm.save();
 };
 
-addProduct();
+// makeFarm();
+// addProduct();
+
+Farm.findOne({ name: "Full Belly Farms" })
+  .populate("products")
+  .then((farm) => {
+    console.log(farm);
+  })
+  .catch((e) => {
+    console.log(e);
+  });
