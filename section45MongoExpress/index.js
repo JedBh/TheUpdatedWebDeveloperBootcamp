@@ -35,20 +35,6 @@ function wrapAsync(fn) {
 }
 
 // routes
-app.get("/products", async (req, res, next) => {
-  try {
-    const { category } = req.query;
-    if (category) {
-      const products = await Product.find({ category: category });
-      res.render("products/index", { products: products, category: category });
-    } else {
-      const products = await Product.find({});
-      res.render("products/index", { products: products, category: "All" });
-    }
-  } catch (e) {
-    next(e);
-  }
-});
 // farm routes
 app.get(
   "/farms",
@@ -80,7 +66,36 @@ app.post(
   })
 );
 
+app.get("/farms/:id/products/new", (req, res) => {
+  const { id } = req.params;
+  res.render("products/new", { id, categories });
+});
+
+app.post("/farms/:id/products", async (req, res) => {
+  const { id } = req.params;
+  const farm = await Farm.findById(id);
+  const { name, price, category } = req.body;
+  const product = new Product({ name, price, category });
+  await product.save();
+  res.send(farm);
+});
+
 // products routes
+app.get("/products", async (req, res, next) => {
+  try {
+    const { category } = req.query;
+    if (category) {
+      const products = await Product.find({ category: category });
+      res.render("products/index", { products: products, category: category });
+    } else {
+      const products = await Product.find({});
+      res.render("products/index", { products: products, category: "All" });
+    }
+  } catch (e) {
+    next(e);
+  }
+});
+
 app.get("/products/new", (req, res) => {
   res.render("products/new", { categories: categories });
 });
@@ -160,3 +175,6 @@ app.use((err, req, res, next) => {
 app.listen(3000, () => {
   console.log("APP IS LISTENING!");
 });
+
+// /farms/:farm_id/products/new GET
+// /farms/:farm_id/products POST

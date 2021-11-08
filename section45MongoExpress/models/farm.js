@@ -17,7 +17,7 @@ const farmSchema = new Schema({
   products: [
     {
       type: Schema.Types.ObjectId,
-      ref: "products",
+      ref: "Product",
     },
   ],
 });
