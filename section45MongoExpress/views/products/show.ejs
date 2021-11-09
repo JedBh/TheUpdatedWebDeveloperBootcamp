@@ -11,6 +11,7 @@
     <ul>
         <li>Price : $<%= product.price %></li>
         <li>Catagory : <a href="/products?category=<%= product.category %>"><%= product.category %></a></li>
+        <li><a href="/farms/<%= product.farm._id %>"><%= product.farm.name %> </a></li>
     </ul>
     <form action="/products/<%= product._id %>?_method=DELETE" method="POST">
         <button>Delete</button>

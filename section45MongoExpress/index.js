@@ -7,6 +7,7 @@ const methodOverride = require("method-override");
 const appError = require("./appError");
 const Product = require("./models/product");
 const Farm = require("./models/farm");
+const { wrap } = require("module");
 
 // connecting to mongodb
 main()
@@ -52,8 +53,18 @@ app.get(
   "/farms/:id",
   wrapAsync(async (req, res) => {
     const { id } = req.params;
-    const farm = await Farm.findById(id);
+    const farm = await Farm.findById(id).populate("products");
+    console.log(farm);
     res.render("farms/show", { farm });
+  })
+);
+
+app.delete(
+  "/farms/:id",
+  wrapAsync(async (req, res) => {
+    const { id } = req.params;
+    const result = await Farm.findByIdAndDelete(id);
+    res.redirect("/farms");
   })
 );
 
@@ -66,18 +77,25 @@ app.post(
   })
 );
 
-app.get("/farms/:id/products/new", (req, res) => {
-  const { id } = req.params;
-  res.render("products/new", { id, categories });
-});
+app.get(
+  "/farms/:id/products/new",
+  wrapAsync(async (req, res) => {
+    const { id } = req.params;
+    const farm = await Farm.findById(id);
+    res.render("products/new", { id, categories, farm });
+  })
+);
 
 app.post("/farms/:id/products", async (req, res) => {
   const { id } = req.params;
   const farm = await Farm.findById(id);
   const { name, price, category } = req.body;
   const product = new Product({ name, price, category });
+  farm.products.push(product);
+  product.farm = farm;
+  await farm.save();
   await product.save();
-  res.send(farm);
+  res.redirect(`/farms/${id}`);
 });
 
 // products routes
@@ -96,9 +114,9 @@ app.get("/products", async (req, res, next) => {
   }
 });
 
-app.get("/products/new", (req, res) => {
-  res.render("products/new", { categories: categories });
-});
+// app.get("/products/new", (req, res) => {
+//   res.render("products/new", { categories: categories });
+// });
 
 app.post("/products", async (req, res, next) => {
   try {
@@ -114,7 +132,7 @@ app.get(
   "/products/:id",
   wrapAsync(async (req, res, next) => {
     const { id } = req.params;
-    const product = await Product.findById(id);
+    const product = await Product.findById(id).populate("farm");
     if (!product) {
       throw new appError("Product not found", 404);
     }
