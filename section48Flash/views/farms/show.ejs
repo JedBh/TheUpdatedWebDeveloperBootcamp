@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Farm</title>
+</head>
+
+<body>
+    <h1><%= farm.name %> </h1>
+    <ul>
+        <li><%= farm.city %> </li>
+        <li><%= farm.email %> </li>
+        <ul>
+            <% farm.products.forEach(el => { %>
+                <li><a href="/products/<%= el._id %>"><%= el.name %></a></li>
+            <% }) %> 
+        </ul>
+    </ul>
+    <a href="/farms/<%= farm._id %>/products/new">Add Product</a>
+    <a href="/farms">All Farms</a>
+    <form action="/farms/<%= farm._id %>?_method=DELETE" method="POST">
+        <button>DELETE FARM</button>
+    </form>
+</body>
+
+</html>
