@@ -3,12 +3,21 @@ const app = express();
 const mongoose = require("mongoose");
 const path = require("path");
 const bcrypt = require("bcrypt");
+const session = require("express-session");
 
 const User = require("./models/user");
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
+
+const sessionOptions = {
+  secret: "notagoodsecret",
+  resave: false,
+  saveUninitialized: false,
+};
+
+app.use(session(sessionOptions));
 
 // connecting to mongodb
 
@@ -36,6 +45,7 @@ app.post("/register", async (req, res) => {
   const hash = await bcrypt.hash(password, 12);
   const user = new User({ username, password: hash });
   await user.save();
+  req.session.user_id = user._id;
   res.redirect("/");
 });
 
@@ -48,6 +58,7 @@ app.post("/login", async (req, res) => {
   const user = await User.findOne({ username });
   const validPassword = await bcrypt.compare(password, user.password);
   if (validPassword) {
+    req.session.user_id = user._id;
     res.send("Welcome");
   } else {
     res.send("Try again");
@@ -55,7 +66,8 @@ app.post("/login", async (req, res) => {
 });
 
 app.get("/secret", (req, res) => {
-  res.send("This will only show if your'e logged in");
+  if (!req.session.user_id) res.redirect("/login");
+  res.send("This will only show if you are logged in");
 });
 
 const PORT = 3000;
