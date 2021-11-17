@@ -65,9 +65,14 @@ app.post("/login", async (req, res) => {
   }
 });
 
+app.post("/logout", (req, res) => {
+  req.session.user_id = null;
+  res.redirect("/login");
+});
+
 app.get("/secret", (req, res) => {
   if (!req.session.user_id) res.redirect("/login");
-  res.send("This will only show if you are logged in");
+  res.render("secret");
 });
 
 const PORT = 3000;
